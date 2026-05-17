@@ -1,0 +1,30 @@
+{
+  "N_simulations": 10000,
+  "HF_dose_IDLH_mgm3": 25.0,
+  "one_compartment": {
+    "capacity_kWh": 485.52,
+    "mean_HF_dose_mgm3": 1161.0436534228086,
+    "median_HF_dose_mgm3": 1146.7857127352336,
+    "pct_HF_exceeds_IDLH": 100.0,
+    "pct_HF_exceeds_5x_IDLH": 100.0,
+    "mean_time_to_IDLH_min": 599.1799728256784,
+    "p_IDLH_within_5min_pct": 0.0,
+    "P_full_comp_fire_annual": 7.453357016215718e-05,
+    "risk_index": 0.0002981342806486287
+  },
+  "two_compartment": {
+    "capacity_kWh_per_comp": 242.76,
+    "mean_HF_dose_mgm3": 580.5218267114043,
+    "median_HF_dose_mgm3": 573.3928563676168,
+    "pct_HF_exceeds_IDLH": 100.0,
+    "pct_HF_exceeds_5x_IDLH": 100.0,
+    "mean_time_to_IDLH_min": 300.6192985749722,
+    "p_IDLH_within_5min_pct": 0.0,
+    "P_full_comp_fire_annual": 7.453357016215718e-05,
+    "risk_index": 0.00022360071048647154
+  },
+  "improvement": {
+    "HF_dose_reduction_pct": 50.0,
+    "IDLH_time_extension_min": 298.56067425070614
+  }
+}

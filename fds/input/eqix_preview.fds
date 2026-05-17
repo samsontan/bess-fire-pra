@@ -1,0 +1,250 @@
+! =============================================================================
+! EQIX SG4-4A BESS BATTERY COMPARTMENT -- FDS INPUT FILE
+! =============================================================================
+! Project  : EQIX SG4 Loyang Cluster, 7 Tai Seng Drive, Singapore
+! Scenario : NMC BESS thermal runaway -- HF dispersion + suppression sequence
+! Compartment: Room 1 (one of two), 242.76 kWh, 7 Galaxy LBF cabinets
+! =============================================================================
+! Room geometry: 7.5 m (X) x 5.0 m (Y) x 3.0 m (Z) = 112.5 m3
+! Mesh resolution: 0.10 m (D*/dx ~ 7.2, acceptable for LES dispersion study)
+! Total cells: 75 x 50 x 30 = 112,500 cells
+! Simulation: 3600 s (1 hour) covering TR onset through full purge
+! =============================================================================
+! PROTECTION SEQUENCE MODELLED:
+!   t = 0 s   : Normal operation, continuous 9 ACH Ex d IIB ventilation active
+!   t = 60 s  : TR onset in CAB-4 (early thermal stress, no visible fire)
+!   t = 90 s  : H2 off-gas detected at 25% LEL -- Stage 0 purge already at 9 ACH
+!   t = 150 s : Smoke/heat detection -- Stage 1 FK-5-1-12 activates
+!   t = 240 s : Fire peaks as Stage 1 agent dissipates
+!   t = 360 s : Stage 2 pre-action water (13.90 mm/min) activates
+!   t = 480 s : HRR declining, fire controlled
+!   t = 720 s : Fire extinguished, residual HF dispersion phase begins
+!   t = 3600 s: End -- HF concentration should be below 0.5 ppm TLV-TWA
+! =============================================================================
+! KEY FIGURES FOR PAPER:
+!   Fig 12: Fire sequence slice at PBY=2.5 (temp + HF, t=150/240/360/600 s)
+!   Fig 14: HF dispersion timeline at PBZ=1.5 (breathing zone, t=300/900/1800/3600 s)
+! =============================================================================
+! RUNTIME ESTIMATE: ~6-10 hours on a 4-core laptop (run overnight with MPI)
+!   To run: fds eqix_sg4_4a.fds (single core)
+!   To run: mpiexec -n 2 fds eqix_sg4_4a.fds (2-core, uses MESH_1 + MESH_2)
+!   For quicker preview: change IJK to 50,34,20 (dx=0.15m) -- ~2 hours
+! =============================================================================
+
+&HEAD CHID='eqix_preview',
+      TITLE='EQIX SG4-4A PREVIEW -- 600s coarse mesh' /
+
+&TIME T_END=600.0, DT=0.01 /
+
+! Output verbosity
+&DUMP RENDER_FILE='EQIX_SG4_4A_BESS.ge1',
+      DT_SLCF=10.0,
+      DT_DEVC=1.0,
+      DT_BNDF=60.0,
+      NFRAMES=720 /
+
+! =============================================================================
+! MESH -- 2 blocks for MPI parallel (split at X=3.75 m)
+! =============================================================================
+&MESH ID='MESH_1', IJK=24,33,20, XB=0.00,3.70, 0.00,5.00, 0.00,3.00 /
+&MESH ID='MESH_2', IJK=25,33,20, XB=3.70,7.50, 0.00,5.00, 0.00,3.00 /
+
+! =============================================================================
+! SPECIES -- HF (primary hazard) and H2 (early warning species)
+! =============================================================================
+! HF: MW=20.01 g/mol, lighter than air (MW=28.97) -- rises to ceiling
+! H2: MW=2.016 g/mol, LEL=4% by volume; 25% LEL = 1.0% vol = Stage 0 trigger
+&SPEC ID='HYDROGEN FLUORIDE', FORMULA='HF' /
+&SPEC ID='HYDROGEN',          FORMULA='H2' /
+
+! =============================================================================
+! REACTION -- propane surrogate for NMC battery combustion
+! HF and H2 are NOT in REAC (propane has no fluorine atoms -- atom balance error)
+! Instead, HF and H2 are injected as passive scalars via SURF MASS_FLUX (below)
+! =============================================================================
+&REAC FUEL='PROPANE',
+      SOOT_YIELD=0.059,
+      CO_YIELD=0.019 /
+
+! =============================================================================
+! HRR TIME RAMP -- TR propagation + dual suppression sequence
+! Peak HRR: 600 kW (single cabinet, Galaxy LBF NMC, 34.68 kWh cell energy)
+! =============================================================================
+&RAMP ID='TR_HRR_RAMP', T=0.0,    F=0.000 /
+&RAMP ID='TR_HRR_RAMP', T=60.0,   F=0.000 / ! TR onset (no visible fire yet)
+&RAMP ID='TR_HRR_RAMP', T=90.0,   F=0.050 / ! Initial off-gas combustion
+&RAMP ID='TR_HRR_RAMP', T=150.0,  F=0.400 / ! Stage 1 FK-5-1-12 activates
+&RAMP ID='TR_HRR_RAMP', T=200.0,  F=0.150 / ! FK suppression effect
+&RAMP ID='TR_HRR_RAMP', T=240.0,  F=0.700 / ! TR propagation resumes as FK depletes
+&RAMP ID='TR_HRR_RAMP', T=360.0,  F=1.000 / ! Peak -- Stage 2 water activates
+&RAMP ID='TR_HRR_RAMP', T=480.0,  F=0.400 / ! Water suppression reduces HRR
+&RAMP ID='TR_HRR_RAMP', T=600.0,  F=0.080 / ! Fire controlled, smoldering
+&RAMP ID='TR_HRR_RAMP', T=720.0,  F=0.020 / ! Near-extinguished
+&RAMP ID='TR_HRR_RAMP', T=900.0,  F=0.000 / ! Extinguished
+&RAMP ID='TR_HRR_RAMP', T=3600.0, F=0.000 /
+
+! =============================================================================
+! SURFACES
+! =============================================================================
+! Cabinet exterior (steel, 2 mm)
+&SURF ID='CABINET_SURF',
+      COLOR='GRAY 50',
+      MATL_ID='STEEL',
+      THICKNESS=0.002 /
+
+! Concrete floor + walls (adiabatic for this dispersion study)
+&SURF ID='CONCRETE', COLOR='GRAY', ADIABATIC=.TRUE. /
+
+! TR fire source: venting fire from front face of CAB-4 (aisle-facing)
+! Trimmed VENT area: 0.65 m W (2.90-3.55) x 2.20 m H = 1.43 m2
+! VENT trimmed 0.15m from MESH_1/MESH_2 boundary at X=3.70 to prevent divergence
+! HRRPUA = 600 kW / 1.43 m2 = 419,580 W/m2
+! MASS_FLUX rescaled to preserve total species emission rates:
+!   Total HF: 1.43 * 0.000181 = 0.000259 kg/s (= 1.76 * 0.000147)
+!   Total H2: 1.43 * 0.0000906 = 0.000130 kg/s (= 1.76 * 0.0000737)
+&SURF ID='TR_FIRE_SURF',
+      HRRPUA=419580.0,
+      RAMP_Q='TR_HRR_RAMP',
+      SPEC_ID(1)='HYDROGEN FLUORIDE',
+      MASS_FLUX(1)=0.000181,
+      RAMP_MF(1)='TR_HRR_RAMP',
+      SPEC_ID(2)='HYDROGEN',
+      MASS_FLUX(2)=0.0000906,
+      RAMP_MF(2)='TR_HRR_RAMP',
+      COLOR='RED' /
+
+! Exhaust: 2 ceiling grilles above cabinet row, each 0.6 x 0.6 = 0.36 m2
+! Q = 2 x 0.36 x 0.390 = 0.281 m3/s = 9.0 ACH in 112.5 m3 room
+! VEL=0.390 (positive = outward from ceiling surface = exhausting up and out)
+&SURF ID='EXHAUST_VENT',
+      VEL=0.390,
+      COLOR='CYAN' /
+
+! =============================================================================
+! MATERIALS
+! =============================================================================
+&MATL ID='STEEL',
+      SPECIFIC_HEAT=0.460,
+      CONDUCTIVITY=45.8,
+      DENSITY=7850.0 /
+
+! =============================================================================
+! OBSTRUCTIONS -- room boundary walls
+! =============================================================================
+! North wall (Y=5.0)
+&OBST XB=0.0,7.5, 5.0,5.1, 0.0,3.0, SURF_ID='CONCRETE', BNDF_OBST=.FALSE. /
+! South wall (Y=0.0)
+&OBST XB=0.0,7.5, -0.1,0.0, 0.0,3.0, SURF_ID='CONCRETE', BNDF_OBST=.FALSE. /
+! West wall (X=0.0)
+&OBST XB=-0.1,0.0, 0.0,5.0, 0.0,3.0, SURF_ID='CONCRETE', BNDF_OBST=.FALSE. /
+! East wall (X=7.5)
+&OBST XB=7.5,7.6, 0.0,5.0, 0.0,3.0, SURF_ID='CONCRETE', BNDF_OBST=.FALSE. /
+! Ceiling (Z=3.0)
+&OBST XB=0.0,7.5, 0.0,5.0, 3.0,3.1, SURF_ID='CONCRETE', BNDF_OBST=.FALSE. /
+
+! =============================================================================
+! GALAXY LBF BATTERY CABINETS -- 7 units along south wall (Y=0 side)
+! Cabinet dimensions: 0.8 m W x 0.9 m D x 2.2 m H
+! Row arrangement: cabinets centred in room, Y 2.00-2.90 (1.0 m south clearance, 2.1 m north clearance)
+! South aisle: Y 0.00-2.00 (2.0 m); North aisle: Y 2.90-5.00 (2.1 m)
+! =============================================================================
+&OBST XB=0.20,1.00, 2.00,2.90, 0.00,2.20, SURF_ID='CABINET_SURF', BNDF_OBST=.TRUE. / ! CAB-1
+&OBST XB=1.10,1.90, 2.00,2.90, 0.00,2.20, SURF_ID='CABINET_SURF', BNDF_OBST=.TRUE. / ! CAB-2
+&OBST XB=2.00,2.80, 2.00,2.90, 0.00,2.20, SURF_ID='CABINET_SURF', BNDF_OBST=.TRUE. / ! CAB-3
+&OBST XB=2.90,3.70, 2.00,2.90, 0.00,2.20, SURF_ID='CABINET_SURF', BNDF_OBST=.TRUE. / ! CAB-4 (TR origin)
+&OBST XB=3.80,4.60, 2.00,2.90, 0.00,2.20, SURF_ID='CABINET_SURF', BNDF_OBST=.TRUE. / ! CAB-5
+&OBST XB=4.70,5.50, 2.00,2.90, 0.00,2.20, SURF_ID='CABINET_SURF', BNDF_OBST=.TRUE. / ! CAB-6
+&OBST XB=5.60,6.40, 2.00,2.90, 0.00,2.20, SURF_ID='CABINET_SURF', BNDF_OBST=.TRUE. / ! CAB-7
+
+! =============================================================================
+! FIRE SOURCE -- TR venting fire from CAB-4 south face (toward south aisle, Y=2.00)
+! Galaxy LBF cabinet: battery module faces are aisle-facing -- realistic vent path
+! Trimmed VENT: XB = 2.90,3.55 (W=0.65m), Z = 0.00,2.20 (H=2.2m) = 1.43 m2
+! HRRPUA = 419,580 W/m2; total HRR = 1.43 x 419,580 = 600 kW (correct peak)
+! =============================================================================
+&VENT XB=2.90,3.55, 2.00,2.00, 0.00,2.20, SURF_ID='TR_FIRE_SURF' / ! South face of CAB-4 (trimmed 0.15m from MESH boundary)
+
+! =============================================================================
+! VENTILATION -- 9 ACH emergency purge (Stage 0 active throughout)
+! Exhaust: 2 ceiling grilles at Y=2.10-2.70 (above cabinet row south half, captures rising HF)
+!   Total exhaust area = 2 x 0.6 x 0.6 = 0.72 m2
+!   VEL=0.390 -> Q = 0.72 x 0.390 = 0.281 m3/s = 1013 m3/hr = 9.0 ACH in 112.5 m3
+! Supply: OPEN north wall (Y=5.0), full width x 1.0 m height -- pressure-driven makeup
+!   Supply via OPEN avoids prescribed-velocity conflict with ceiling jet from fire
+!   Induced velocity = 0.281 / (7.5 x 1.0) = 0.037 m/s (gentle; no stability issues)
+! =============================================================================
+! Exhaust grille 1: X=0.9-1.5, Y=2.10-2.70, Z=3.0
+&VENT XB=0.90,1.50, 2.10,2.70, 3.00,3.00, SURF_ID='EXHAUST_VENT' /
+! Exhaust grille 2: X=6.0-6.6, Y=2.10-2.70, Z=3.0
+&VENT XB=6.00,6.60, 2.10,2.70, 3.00,3.00, SURF_ID='EXHAUST_VENT' /
+
+! Supply makeup air: OPEN north wall, full width x 1.0 m at floor level
+! (replaces 2x ceiling supply diffusers -- avoids ceiling jet conflict)
+&VENT XB=0.00,7.50, 5.00,5.00, 0.00,1.00, SURF_ID='OPEN' /
+
+! =============================================================================
+! SLICE FILES -- output planes for post-processing
+! Quantities: HF mass fraction, temperature, velocity magnitude
+! =============================================================================
+! Fig 14: HF at breathing zone (Z=1.5 m, horizontal plan view)
+&SLCF PBZ=1.50, QUANTITY='MASS FRACTION',  SPEC_ID='HYDROGEN FLUORIDE' /
+&SLCF PBZ=1.50, QUANTITY='TEMPERATURE' /
+&SLCF PBZ=1.50, QUANTITY='U-VELOCITY' /
+
+! Near-ceiling layer (Z=2.7 m) -- HF and temperature
+&SLCF PBZ=2.70, QUANTITY='MASS FRACTION',  SPEC_ID='HYDROGEN FLUORIDE' /
+&SLCF PBZ=2.70, QUANTITY='TEMPERATURE' /
+
+! Fig 12: Fire sequence -- vertical cross-section through south aisle (Y=1.50 m, in front of fire face)
+&SLCF PBY=1.50, QUANTITY='MASS FRACTION',  SPEC_ID='HYDROGEN FLUORIDE' /
+&SLCF PBY=1.50, QUANTITY='TEMPERATURE' /
+&SLCF PBY=1.50, QUANTITY='U-VELOCITY' /
+
+! Vertical slice through CAB-4 fire axis (X=3.30 m)
+&SLCF PBX=3.30, QUANTITY='MASS FRACTION',  SPEC_ID='HYDROGEN FLUORIDE' /
+&SLCF PBX=3.30, QUANTITY='TEMPERATURE' /
+&SLCF PBX=3.30, QUANTITY='HRRPUV' /
+
+! H2 slices (early warning species)
+&SLCF PBZ=1.50, QUANTITY='MASS FRACTION',  SPEC_ID='HYDROGEN' /
+&SLCF PBZ=2.70, QUANTITY='MASS FRACTION',  SPEC_ID='HYDROGEN' /
+
+! =============================================================================
+! POINT DETECTORS / DEVICES
+! =============================================================================
+! H2 gas sensor: ceiling above CAB-4 maintenance aisle (Stage 0 trigger)
+! Moved from inside cabinet OBST (Y=0.55) to aisle at Y=1.50, Z=2.80
+&DEVC XB=3.30,3.30, 1.50,1.50, 2.80,2.80,
+      QUANTITY='MASS FRACTION', SPEC_ID='HYDROGEN',
+      ID='H2_SENSOR_CAB4', SETPOINT=0.0025 /    ! 25% LEL = 1% vol = 0.00201 mass frac
+
+! HF monitor at breathing zone -- north aisle (Y=3.30, 0.4m from cabinet north face)
+&DEVC XB=3.75,3.75, 3.30,3.30, 1.50,1.50,
+      QUANTITY='MASS FRACTION', SPEC_ID='HYDROGEN FLUORIDE',
+      ID='HF_NORTH_AISLE_BZ' /
+
+! HF monitor near door (evacuation route)
+&DEVC XB=7.20,7.20, 4.50,4.50, 1.50,1.50,
+      QUANTITY='MASS FRACTION', SPEC_ID='HYDROGEN FLUORIDE',
+      ID='HF_DOOR_BZ' /
+
+! HF ceiling layer -- south aisle above CAB-4 fire
+&DEVC XB=3.75,3.75, 1.50,1.50, 2.80,2.80,
+      QUANTITY='MASS FRACTION', SPEC_ID='HYDROGEN FLUORIDE',
+      ID='HF_CEILING_CAB4' /
+
+! Temperature above CAB-4 fire -- south aisle near ceiling
+&DEVC XB=3.30,3.30, 1.50,1.50, 2.50,2.50,
+      QUANTITY='TEMPERATURE', ID='TEMP_PLUME_CAB4' /
+
+! HRR (total)
+&DEVC XB=0.0,7.5, 0.0,5.0, 0.0,3.0,
+      QUANTITY='HRR', ID='TOTAL_HRR' /
+
+! =============================================================================
+! BOUNDARY FILE -- temperature on cabinet surfaces
+! =============================================================================
+&BNDF QUANTITY='WALL TEMPERATURE' /
+&BNDF QUANTITY='NET HEAT FLUX' /
+
+&TAIL /

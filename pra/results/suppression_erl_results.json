@@ -1,0 +1,31 @@
+{
+  "water_only": {
+    "P_uncontrolled_flaming": 0.6217609999999999,
+    "ERL_per_compartment_year": 6.0884733267361213e-05,
+    "ERL_annual_2comp": 0.00012176946653472243,
+    "peak_CO_mgm3": 3.7353791340601825,
+    "peak_HF_mgm3": 5667.503991152813,
+    "CO_fatality_fraction": 0.0010254136686122595,
+    "smoke_fatality_fraction": 0.015,
+    "ERL_reduction_pct": 0.0
+  },
+  "gas_plus_water": {
+    "P_uncontrolled_flaming": 0.12435220000000004,
+    "ERL_per_compartment_year": 1.1985638290694452e-05,
+    "ERL_annual_2comp": 2.3971276581388903e-05,
+    "peak_CO_mgm3": 0.9341358053384115,
+    "peak_HF_mgm3": 1133.5007982305624,
+    "CO_fatality_fraction": 0.00020508273372245192,
+    "smoke_fatality_fraction": 0.003,
+    "ERL_reduction_pct": 80.31421401147921
+  },
+  "comparison": {
+    "ERL_absolute_reduction": 9.779818995333353e-05,
+    "ERL_relative_reduction_pct": 80.31421401147921,
+    "CO_reduction_pct": 96.00000000000001,
+    "smoke_reduction_pct": 96.0,
+    "gas_suppression_effectiveness": 0.8,
+    "water_median_delay_min": 7.987553860503645,
+    "gas_activation_delay_min": 0.5
+  }
+}

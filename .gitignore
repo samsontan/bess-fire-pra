@@ -1,0 +1,18 @@
+# FDS binary outputs
+*.sf
+*.bf
+*.s3d
+*.s3dd
+*.smv
+*.bf.bnd
+*.sf.bnd
+*.q.bnd
+*.pickle
+*.gbnd
+*.csv
+preview_run.log
+rerun_centred.log
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

@@ -1,0 +1,159 @@
+{
+  "analysis_1_cfd_dispersion": {
+    "compartment_volume_m3": 116.0,
+    "floor_area_m2": 38.688399999999994,
+    "ceiling_height_m": 3.0,
+    "ventilation_ach": 9.0,
+    "ventilation_flow_m3s": 0.29,
+    "plume_flow_m3s": 0.08,
+    "dilution_factor": 0.5488116360940264,
+    "mean_near_source_HF_mgm3": 2.121318567480851,
+    "pct_near_source_exceeds_IDLH": 0.0,
+    "pct_near_source_exceeds_5x_IDLH": 0.0,
+    "pct_near_source_exceeds_10x_IDLH": 0.0,
+    "mean_room_HF_mgm3": 402.03599671702256,
+    "pct_room_exceeds_IDLH": 100.0,
+    "mean_near_IDLH_time_min": 154.61177773697284,
+    "median_near_IDLH_time_min": 152.52218042006547,
+    "p_IDLH_under_1min": 0.0,
+    "p_IDLH_under_2min": 0.0,
+    "p_IDLH_under_5min": 0.0,
+    "near_source_to_room_ratio": 0.005276439385535828,
+    "near_source_spatial_gradient_m": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      5.0
+    ]
+  },
+  "analysis_2_bms_sensitivity": {
+    "0.01": {
+      "P_multi_cabinet": 7.999999999999996e-06,
+      "P_full_TR_annual": 4.9689046774771446e-06,
+      "risk_1comp": 1.9875618709908578e-05,
+      "risk_2comp": 1.4906714032431434e-05,
+      "broadly_accept_1comp": true,
+      "broadly_accept_2comp": true,
+      "ALARP_1comp": false,
+      "ALARP_2comp": false
+    },
+    "0.05": {
+      "P_multi_cabinet": 3.999999999999998e-05,
+      "P_full_TR_annual": 2.4844523387385723e-05,
+      "risk_1comp": 9.937809354954289e-05,
+      "risk_2comp": 7.453357016215717e-05,
+      "broadly_accept_1comp": true,
+      "broadly_accept_2comp": true,
+      "ALARP_1comp": false,
+      "ALARP_2comp": false
+    },
+    "0.1": {
+      "P_multi_cabinet": 7.999999999999997e-05,
+      "P_full_TR_annual": 4.9689046774771446e-05,
+      "risk_1comp": 0.00019875618709908578,
+      "risk_2comp": 0.00014906714032431433,
+      "broadly_accept_1comp": false,
+      "broadly_accept_2comp": false,
+      "ALARP_1comp": true,
+      "ALARP_2comp": true
+    },
+    "0.15": {
+      "P_multi_cabinet": 0.00011999999999999995,
+      "P_full_TR_annual": 7.453357016215717e-05,
+      "risk_1comp": 0.00029813428064862866,
+      "risk_2comp": 0.00022360071048647148,
+      "broadly_accept_1comp": false,
+      "broadly_accept_2comp": false,
+      "ALARP_1comp": true,
+      "ALARP_2comp": true
+    },
+    "0.2": {
+      "P_multi_cabinet": 0.00015999999999999993,
+      "P_full_TR_annual": 9.937809354954289e-05,
+      "risk_1comp": 0.00039751237419817157,
+      "risk_2comp": 0.00029813428064862866,
+      "broadly_accept_1comp": false,
+      "broadly_accept_2comp": false,
+      "ALARP_1comp": true,
+      "ALARP_2comp": true
+    },
+    "0.25": {
+      "P_multi_cabinet": 0.0001999999999999999,
+      "P_full_TR_annual": 0.0001242226169369286,
+      "risk_1comp": 0.0004968904677477144,
+      "risk_2comp": 0.0003726678508107858,
+      "broadly_accept_1comp": false,
+      "broadly_accept_2comp": false,
+      "ALARP_1comp": true,
+      "ALARP_2comp": true
+    },
+    "0.3": {
+      "P_multi_cabinet": 0.0002399999999999999,
+      "P_full_TR_annual": 0.00014906714032431433,
+      "risk_1comp": 0.0005962685612972573,
+      "risk_2comp": 0.00044720142097294296,
+      "broadly_accept_1comp": false,
+      "broadly_accept_2comp": false,
+      "ALARP_1comp": true,
+      "ALARP_2comp": true
+    },
+    "0.4": {
+      "P_multi_cabinet": 0.00031999999999999986,
+      "P_full_TR_annual": 0.00019875618709908578,
+      "risk_1comp": 0.0007950247483963431,
+      "risk_2comp": 0.0005962685612972573,
+      "broadly_accept_1comp": false,
+      "broadly_accept_2comp": false,
+      "ALARP_1comp": true,
+      "ALARP_2comp": true
+    }
+  },
+  "analysis_3_hf_yield_sensitivity": {
+    "Low (0.3)": {
+      "m_HF_g": 145.65599999999998,
+      "mean_dose_1comp": 650.837479742922,
+      "mean_dose_2comp": 325.418739871461,
+      "pct_exceed_IDLH_1comp": 100.0,
+      "pct_exceed_IDLH_2comp": 100.0,
+      "pct_exceed_10x_IDLH_1comp": 99.96000000000001,
+      "pct_exceed_10x_IDLH_2comp": 94.95,
+      "mean_tIDLH_1comp_min": 326.11608831941214,
+      "mean_tIDLH_2comp_min": 158.6953986642397,
+      "p_tIDLH_5min_1comp": 0.0,
+      "p_tIDLH_5min_2comp": 0.0,
+      "risk_1comp": 0.0002979969985954,
+      "risk_2comp": 0.00022349774894655003
+    },
+    "Mid (0.5)": {
+      "m_HF_g": 242.76,
+      "mean_dose_1comp": 1084.7291329048705,
+      "mean_dose_2comp": 542.3645664524353,
+      "pct_exceed_IDLH_1comp": 100.0,
+      "pct_exceed_IDLH_2comp": 100.0,
+      "pct_exceed_10x_IDLH_1comp": 99.99,
+      "pct_exceed_10x_IDLH_2comp": 99.91,
+      "mean_tIDLH_1comp_min": 549.3436745263086,
+      "mean_tIDLH_2comp_min": 270.309191767688,
+      "p_tIDLH_5min_1comp": 0.0,
+      "p_tIDLH_5min_2comp": 0.0,
+      "risk_1comp": 0.0002979969985954,
+      "risk_2comp": 0.00022349774894655003
+    },
+    "High (0.8)": {
+      "m_HF_g": 388.416,
+      "mean_dose_1comp": 1735.5666126477927,
+      "mean_dose_2comp": 867.7833063238963,
+      "pct_exceed_IDLH_1comp": 100.0,
+      "pct_exceed_IDLH_2comp": 100.0,
+      "pct_exceed_10x_IDLH_1comp": 100.0,
+      "pct_exceed_10x_IDLH_2comp": 99.98,
+      "mean_tIDLH_1comp_min": 884.1850538366535,
+      "mean_tIDLH_2comp_min": 437.72988142286044,
+      "p_tIDLH_5min_1comp": 0.0,
+      "p_tIDLH_5min_2comp": 0.0,
+      "risk_1comp": 0.0002979969985954,
+      "risk_2comp": 0.00022349774894655003
+    }
+  }
+}
