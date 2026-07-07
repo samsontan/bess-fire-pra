@@ -1,0 +1,10 @@
+{
+  "phase": "COMPLETE",
+  "started": "2026-06-12T01:10:33.551863",
+  "updated": "2026-06-15T20:26:41.362764",
+  "elapsed_s": 6641,
+  "hrr_check": "PASS",
+  "peak_hrr_kw": 713.4,
+  "peak_time_s": 385.0,
+  "figures_copied": 9
+}
