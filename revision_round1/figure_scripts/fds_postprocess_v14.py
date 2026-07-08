@@ -336,7 +336,7 @@ def make_fig14(smv_mapping, fds_dir, chid):
         Z_plot = hf_ppm.T                    # (nv, nh) -- matches meshgrid shape
 
         ax.pcolormesh(XX, YY, Z_plot, cmap=CMAP_HF,
-                      vmin=0, vmax=vmax, shading='auto', zorder=2)
+                      vmin=0, vmax=vmax, shading='gouraud', zorder=2)
 
         # Threshold contours
         for lvl, col, lbl in [(TLV_C, 'white', f'{TLV_C} ppm'),
@@ -440,7 +440,7 @@ def make_fig12(smv_mapping, fds_dir, chid):
         Z_plot = hf_ppm.T                      # (nv, nh)
 
         ax.pcolormesh(XX, ZZ, Z_plot, cmap=CMAP_HF,
-                      vmin=0, vmax=vmax, shading='auto', zorder=2, alpha=0.85)
+                      vmin=0, vmax=vmax, shading='gouraud', zorder=2, alpha=0.85)
 
         # Temperature contours if available
         if all_temp is not None:
@@ -555,7 +555,7 @@ def make_fig_ceiling(smv_mapping, fds_dir, chid):
             t_act = times[tidx]
             data  = all_data[tidx]
             ax.pcolormesh(XX, YY, data.T, cmap=_cmap,
-                          vmin=0, vmax=vmax, shading='auto', zorder=2)
+                          vmin=0, vmax=vmax, shading='gouraud', zorder=2)
             if np.nanmax(data) > threshold:
                 cs = ax.contour(XX, YY, data.T, levels=[threshold],
                                 colors=['red'], linewidths=1.5, zorder=7)
@@ -636,7 +636,7 @@ def make_fig_h2_bz(smv_mapping, fds_dir, chid):
         t_act = times[tidx]
         data  = all_data[tidx]
         ax.pcolormesh(XX, YY, data.T, cmap=_cmap,
-                      vmin=0, vmax=vmax, shading='auto', zorder=2)
+                      vmin=0, vmax=vmax, shading='gouraud', zorder=2)
         for lvl, col, lbl in [(H2_STEL_MF, 'orange', '25% LFL'),
                                (H2_LFL_MF,  'red',    '100% LFL')]:
             if np.nanmax(data) > lvl:
@@ -742,7 +742,7 @@ def make_fig_fire_section(smv_mapping, fds_dir, chid):
             frame = np.maximum(frame, 0)
 
             ax.pcolormesh(XX, ZZ, frame, cmap=row_cmaps[qty_label],
-                          vmin=0, vmax=vmax, shading='auto', zorder=2)
+                          vmin=0, vmax=vmax, shading='gouraud', zorder=2)
 
             # Threshold lines
             if qty_label == 'TEMP':
@@ -903,7 +903,7 @@ def make_fig_temp_ceiling(smv_mapping, fds_dir, chid):
         T_plot = data.T
 
         ax.pcolormesh(XX, YY, T_plot, cmap=_cmap,
-                      vmin=T_amb, vmax=vmax, shading='auto', zorder=2)
+                      vmin=T_amb, vmax=vmax, shading='gouraud', zorder=2)
 
         for lvl, col in [(50, 'black'), (100, 'black'),
                          (200, 'black'), (400, 'black')]:
@@ -989,7 +989,7 @@ def make_fig_temp_bz(smv_mapping, fds_dir, chid):
         T_plot = data.T          # (nv, nh)
 
         ax.pcolormesh(XX, YY, T_plot, cmap=_cmap,
-                      vmin=T_amb, vmax=vmax, shading='auto', zorder=2)
+                      vmin=T_amb, vmax=vmax, shading='gouraud', zorder=2)
 
         # Contours at 50, 100, 200, 400 C
         for lvl, col in [(50, 'black'), (100, 'black'),
