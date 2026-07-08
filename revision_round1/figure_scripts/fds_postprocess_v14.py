@@ -72,7 +72,7 @@ EXHAUST_X = [(0.90, 1.50), (6.00, 6.60)]  # (X1, X2) pairs
 
 # Custom colormap: white -> yellow -> orange -> red (HF hazard)
 _hf_colors = ['#FFFFFF', '#FFFACD', '#FFD700', '#FF8C00', '#FF2200', '#8B0000']
-CMAP_HF = mcolors.LinearSegmentedColormap.from_list('HF_hazard', _hf_colors, N=256)
+CMAP_HF = matplotlib.colormaps.get_cmap('jet')
 
 
 # =============================================================================
@@ -339,8 +339,8 @@ def make_fig14(smv_mapping, fds_dir, chid):
                       vmin=0, vmax=vmax, shading='auto', zorder=2)
 
         # Threshold contours
-        for lvl, col, lbl in [(TLV_C, 'dodgerblue', f'{TLV_C} ppm'),
-                               (IDLH,  'darkred',    f'{IDLH} ppm')]:
+        for lvl, col, lbl in [(TLV_C, 'white', f'{TLV_C} ppm'),
+                               (IDLH,  'black',    f'{IDLH} ppm')]:
             if np.nanmax(hf_ppm) > lvl:
                 cs = ax.contour(XX, YY, Z_plot, levels=[lvl],
                                 colors=[col], linewidths=1.2, zorder=7)
@@ -369,7 +369,7 @@ def make_fig14(smv_mapping, fds_dir, chid):
     sm.set_array([])
     cb = fig.colorbar(sm, ax=axes, fraction=0.025, pad=0.02, aspect=25)
     cb.set_label('HF concentration (ppm)', fontsize=10)
-    for lvl, col in [(TLV_C, 'dodgerblue'), (IDLH, 'darkred')]:
+    for lvl, col in [(TLV_C, 'white'), (IDLH, 'black')]:
         cb.ax.axhline(lvl / vmax, color=col, linewidth=1.2)
 
     (lambda *a, **k: None)(
@@ -449,15 +449,15 @@ def make_fig12(smv_mapping, fds_dir, chid):
             temp_levels = [50, 100, 200, 400]
             try:
                 ct = ax.contour(XT, ZT, T_plot, levels=temp_levels,
-                                colors=['#004488', '#006699', '#333333', '#000000'],
+                                colors=['black'],
                                 linewidths=1.0, zorder=6)
                 ax.clabel(ct, fmt='%d C', fontsize=8.5, inline=True)
             except Exception:
                 pass
 
         # HF threshold contours
-        for lvl, col, lbl in [(TLV_C, 'dodgerblue', f'{TLV_C} ppm'),
-                               (IDLH,  'darkred',    f'{IDLH} ppm')]:
+        for lvl, col, lbl in [(TLV_C, 'white', f'{TLV_C} ppm'),
+                               (IDLH,  'black',    f'{IDLH} ppm')]:
             if np.nanmax(hf_ppm) > lvl:
                 cs = ax.contour(XX, ZZ, Z_plot, levels=[lvl],
                                 colors=[col], linewidths=1.0, linestyles='--', zorder=7)
@@ -490,7 +490,7 @@ def make_fig12(smv_mapping, fds_dir, chid):
         sm.set_array([])
         cb = fig.colorbar(sm, ax=ax, fraction=0.018, pad=0.01)
         cb.set_label('HF (ppm)', fontsize=9)
-        for lvl, col in [(TLV_C, 'dodgerblue'), (IDLH, 'darkred')]:
+        for lvl, col in [(TLV_C, 'white'), (IDLH, 'black')]:
             cb.ax.axhline(lvl / vmax, color=col, linewidth=1.0)
 
     (lambda *a, **k: None)(
@@ -536,11 +536,7 @@ def make_fig_ceiling(smv_mapping, fds_dir, chid):
         snaps = [t for t in snap_targets if t <= times[-1] + 5] or [times[-1]]
         n = len(snaps)
 
-        if cmap_name is None:
-            _c = ['#FFFFFF', '#E0F0FF', '#80CCFF', '#2080FF', '#0000CC', '#000066']
-            _cmap = mcolors.LinearSegmentedColormap.from_list('h2_risk', _c, N=256)
-        else:
-            _cmap = cmap_name
+        _cmap = matplotlib.colormaps.get_cmap('jet')
 
         n_col = 3 if n > 3 else n
         n_row = (n + n_col - 1) // n_col
@@ -759,8 +755,8 @@ def make_fig_fire_section(smv_mapping, fds_dir, chid):
                         except Exception:
                             pass
             elif qty_label == 'HF':
-                for lvl, col, lbl in [(TLV_C, 'dodgerblue', f'{TLV_C} ppm'),
-                                       (IDLH,  'darkred',    f'{IDLH} ppm')]:
+                for lvl, col, lbl in [(TLV_C, 'white', f'{TLV_C} ppm'),
+                                       (IDLH,  'black',    f'{IDLH} ppm')]:
                     if frame.max() > lvl:
                         cs = ax.contour(XX, ZZ, frame, levels=[lvl], colors=[col],
                                         linestyles='--', linewidths=0.8, zorder=7)
@@ -884,7 +880,7 @@ def make_fig_temp_ceiling(smv_mapping, fds_dir, chid):
     snaps = [t for t in snap_targets if t <= times[-1] + 5] or [times[-1]]
     n = len(snaps)
 
-    _cmap = matplotlib.colormaps.get_cmap('inferno')
+    _cmap = matplotlib.colormaps.get_cmap('jet')
     T_amb = 20.0
     T_max = max(float(np.nanmax(all_data)), 200.0)
     vmax  = T_max * 1.05
@@ -909,8 +905,8 @@ def make_fig_temp_ceiling(smv_mapping, fds_dir, chid):
         ax.pcolormesh(XX, YY, T_plot, cmap=_cmap,
                       vmin=T_amb, vmax=vmax, shading='auto', zorder=2)
 
-        for lvl, col in [(50, '#FFEE88'), (100, '#FFAA00'),
-                         (200, '#FF4400'), (400, '#CC0000')]:
+        for lvl, col in [(50, 'black'), (100, 'black'),
+                         (200, 'black'), (400, 'black')]:
             if np.nanmax(data) > lvl:
                 cs = ax.contour(XX, YY, T_plot, levels=[lvl],
                                 colors=[col], linewidths=1.0, zorder=7)
@@ -969,7 +965,7 @@ def make_fig_temp_bz(smv_mapping, fds_dir, chid):
     snaps = [t for t in snap_targets if t <= times[-1] + 5] or [times[-1]]
     n = len(snaps)
 
-    _cmap = matplotlib.colormaps.get_cmap('inferno')
+    _cmap = matplotlib.colormaps.get_cmap('jet')
 
     n_col = 3 if n > 3 else n
     n_row = (n + n_col - 1) // n_col
@@ -982,7 +978,6 @@ def make_fig_temp_bz(smv_mapping, fds_dir, chid):
 
     T_amb  = 20.0
     T_max  = max(float(np.nanmax(all_data)), 200.0)
-    T_max  = min(T_max, 300.0)
     vmax   = T_max * 1.05
 
     XX, YY = np.meshgrid(h_vec, v_vec)
@@ -997,8 +992,8 @@ def make_fig_temp_bz(smv_mapping, fds_dir, chid):
                       vmin=T_amb, vmax=vmax, shading='auto', zorder=2)
 
         # Contours at 50, 100, 200, 400 C
-        for lvl, col in [(50, '#FFEE88'), (100, '#FFAA00'),
-                         (200, '#FF4400'), (400, '#CC0000')]:
+        for lvl, col in [(50, 'black'), (100, 'black'),
+                         (200, 'black'), (400, 'black')]:
             if np.nanmax(data) > lvl:
                 cs = ax.contour(XX, YY, T_plot, levels=[lvl],
                                 colors=[col], linewidths=1.0, zorder=7)
@@ -1026,7 +1021,7 @@ def make_fig_temp_bz(smv_mapping, fds_dir, chid):
     sm.set_array([])
     cb = fig.colorbar(sm, ax=axes, fraction=0.025, pad=0.02, aspect=25)
     cb.set_label('Temperature (deg C)', fontsize=10)
-    for lvl, col in [(50, '#FFEE88'), (100, '#FFAA00'), (200, '#FF4400'), (400, '#CC0000')]:
+    for lvl, col in [(50, 'black'), (100, 'black'), (200, 'black'), (400, 'black')]:
         cb.ax.axhline((lvl - T_amb) / (vmax - T_amb), color=col, linewidth=1.0)
 
     (lambda *a, **k: None)(
