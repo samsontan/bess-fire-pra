@@ -74,3 +74,15 @@ the quantitative justification for the two-stage design.
 
 Code: MIT License
 Data: CC BY 4.0
+
+## Paths referenced in the published paper
+
+Fire (MDPI), fire-4382023. Each path below resolves as printed:
+
+| Paper refers to | Location |
+|---|---|
+| `pra_simulation.py` (from repository root) | root shim -> `pra/pra_simulation.py` |
+| `fds_input/eqix_sg4_4a.fds` | `fds_input/` (copy of `fds/input/eqix_preview.fds`) |
+| `pra_results.json` | `pra/results/pra_results.json` |
+| `suppression_erl_results.json` | `pra/results/suppression_erl_results.json` |
+| Figure S-A.1 (convergence) | `figures/` |
