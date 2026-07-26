@@ -303,7 +303,11 @@ results = {
     }
 }
 
-with open("/tmp/bess_fire_research/output/pra_results.json", "w") as f:
+import os
+_results_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
+os.makedirs(_results_dir, exist_ok=True)
+_results_path = os.path.join(_results_dir, "pra_results.json")
+with open(_results_path, "w") as f:
     json.dump(results, f, indent=2)
 
-print("\n\nResults saved to /tmp/bess_fire_research/output/pra_results.json")
+print(f"\n\nResults saved to {_results_path}")
