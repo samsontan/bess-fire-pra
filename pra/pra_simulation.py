@@ -3,6 +3,16 @@ BESS Fire Safety Probabilistic Risk Assessment — Monte Carlo Simulation
 Comparing 1-compartment vs 2-compartment designs for EQIX SG4-4A installation
 """
 
+import os
+import sys
+
+# The console summary below contains non-ASCII characters. A Windows console
+# defaulting to cp1252 would abort with UnicodeEncodeError, so make stdout
+# capable of encoding them wherever the interpreter allows it.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, ValueError):
+    pass
 import numpy as np
 import json
 
